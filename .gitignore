@@ -1,5 +1,6 @@
 # Secrets — jamais versionnés
 .env
+.credentials
 
 # Données runtime des conteneurs (configs, bases de données, etc.)
 compose/arr-stack/radarr-config/

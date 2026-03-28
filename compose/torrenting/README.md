@@ -18,17 +18,27 @@ Prowlarr est le hub central d'indexeurs : il les configure une seule fois et les
    - Type : FlareSolverr, URL : `http://flaresolverr:8191`
 4. `Paramètres → Général` → noter la clé API → mettre dans `.env` (`HOMEPAGE_PROWLARR_KEY`)
 
-### RDTClient — Client Real-Debrid
+### RDTClient — Client de téléchargement debrid
 - **Port** : `6500`
 - **Config** : `compose/torrenting/rdtclient-config/` (non versionné)
 - **URL** : `https://rdt.${DOMAIN}`
 
-RDTClient est un client torrent qui débride automatiquement les liens via Real-Debrid, offrant des vitesses de téléchargement maximales sans tracker public.
+RDTClient est un client torrent qui débride automatiquement les liens via un service debrid, offrant des vitesses de téléchargement maximales sans tracker public.
+
+**Services debrid supportés :**
+| Service | Lien clé API |
+|---|---|
+| Real-Debrid | [real-debrid.com/apitoken](https://real-debrid.com/apitoken) |
+| AllDebrid | [alldebrid.com/apikeys](https://alldebrid.com/apikeys/) |
+| Premiumize | [premiumize.me/account](https://www.premiumize.me/account) |
+| Debrid-Link | [debrid-link.com/webapp/apikey](https://debrid-link.com/webapp/apikey) |
+| TorBox | [torbox.app/settings](https://torbox.app/settings) |
 
 **Post-install :**
-1. `Settings` → entrer la clé API Real-Debrid (obtenir sur [real-debrid.com/apitoken](https://real-debrid.com/apitoken))
-2. `Settings → General` → définir le chemin des téléchargements : `/data/downloads/rdtclient`
-3. Dans Radarr/Sonarr : `Paramètres → Clients de téléchargement → +`
+1. `Settings → Provider` → choisir le service souhaité
+2. `Settings` → entrer la clé API du service
+3. `Settings → Download path` → définir : `/data/downloads/rdtclient`
+4. Dans Radarr/Sonarr : `Paramètres → Clients de téléchargement → +`
    - Type : qBittorrent, Host : `rdtclient`, Port : `6500`
    - Catégorie : `radarr` ou `sonarr`
 

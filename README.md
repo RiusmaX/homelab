@@ -16,7 +16,7 @@ Stack Docker Compose complète, sécurisée et déployable en one-click sur un s
 | **Seerr** | Demandes de médias | 5055 | [→](compose/arr-stack/README.md) |
 | **Prowlarr** | Gestionnaire d'indexeurs | 9696 | [→](compose/torrenting/README.md) |
 | **FlareSolverr** | Bypass Cloudflare | 8191 (interne) | [→](compose/arr-stack/README.md) |
-| **RDTClient** | Client Real-Debrid | 6500 | [→](compose/torrenting/README.md) |
+| **RDTClient** | Client debrid (Real-Debrid, AllDebrid…) | 6500 | [→](compose/torrenting/README.md) |
 | **pyLoad** | Téléchargements HTTP | 8000 | [→](compose/pyload/README.md) |
 | **Duplicati** | Sauvegardes chiffrées | 8200 | [→](compose/duplicati/README.md) |
 | **ntfy** | Notifications push | 80 | [→](compose/ntfy.sh/README.md) |
@@ -36,11 +36,11 @@ Internet
 Nginx Proxy Manager  (proxy_manager network)
    │
    ├── homepage:3000
-   ├── radarr:7878  ──┐
-   ├── sonarr:8989    ├─ arr-stack
-   ├── seerr:5055     │
+   ├── radarr:7878      ──┐
+   ├── sonarr:8989        ├─ arr-stack
+   ├── seerr:5055         │
    ├── flaresolverr:8191 ─┘
-   ├── prowlarr:9696 ─┐
+   ├── prowlarr:9696  ─┐
    ├── rdtclient:6500  ├─ torrenting
    │                  ─┘
    ├── tautulli:8181
@@ -120,8 +120,8 @@ homelab/
 - Serveur **Ubuntu 22.04 / 24.04 LTS** ou **Debian 12** (x86-64)
 - Accès root ou sudo
 - **Nom de domaine** avec accès DNS (pour Let's Encrypt)
-- **Ports 80 et 443** ouverts depuis Internet (firewall / NAT box)
-- Optionnel : compte [Real-Debrid](https://real-debrid.com) pour RDTClient
+- **Ports 80 et 443** ouverts depuis Internet (NAT / firewall box — voir section 4)
+- Optionnel : compte sur un service debrid ([Real-Debrid](https://real-debrid.com), [AllDebrid](https://alldebrid.com), etc.) pour RDTClient
 
 ---
 
@@ -187,12 +187,59 @@ stats.yourdomain.com         → <IP_PUBLIQUE>
 proxy-manager.yourdomain.com → <IP_PUBLIQUE>
 ```
 
-### 4. Configurer Nginx Proxy Manager
+> **Fournisseur DNS recommandé** : [Cloudflare](https://cloudflare.com) (gratuit, propagation rapide, compatible avec le DNS challenge Let's Encrypt de NPM).
+
+### 4. Configurer le routeur / box internet
+
+Pour que les services soient accessibles depuis l'extérieur (Internet), il faut configurer le routeur / box domestique.
+
+#### 4.1 Redirection de ports (NAT / Port Forwarding)
+
+Dans l'interface de ta box (ex: `192.168.1.1`) :
+
+| Port externe | Port interne | Protocole | Cible |
+|---|---|---|---|
+| `80` | `80` | TCP | IP LAN du serveur (ex: `192.168.1.100`) |
+| `443` | `443` | TCP | IP LAN du serveur |
+
+> **Ne pas exposer le port 81** (interface NPM) — il est volontairement lié à `127.0.0.1` et accessible uniquement depuis le réseau local.
+
+#### 4.2 Adresse IP fixe locale
+
+Assigner une IP fixe (bail DHCP statique) au serveur dans la configuration DHCP de la box, pour que la redirection de ports reste valide après un redémarrage du serveur.
+
+#### 4.3 IP publique dynamique (DDNS)
+
+Si ton FAI attribue une IP publique dynamique (change à chaque reconnexion) :
+
+**Option A — Cloudflare (recommandé) :**
+1. Passer les DNS de ton domaine sur Cloudflare (gratuit)
+2. Utiliser un client DDNS comme [`cloudflare-ddns`](https://github.com/favonia/cloudflare-ddns) en conteneur Docker pour mettre à jour automatiquement l'enregistrement A
+
+**Option B — DuckDNS :**
+1. Créer un sous-domaine gratuit sur [duckdns.org](https://www.duckdns.org)
+2. Configurer un CNAME depuis ton domaine vers le sous-domaine DuckDNS
+3. Lancer le client DuckDNS : `docker run -e SUBDOMAINS=monlab -e TOKEN=xxx ghcr.io/linuxserver/duckdns`
+
+**Option C — No-IP / Dynu :**
+Utiliser le client DDNS intégré à certaines box (Freebox, Livebox...) ou un client tiers.
+
+#### 4.4 Test de connectivité
+
+Avant de continuer :
+```bash
+# Vérifier que les ports 80 et 443 sont ouverts depuis l'extérieur
+curl -s https://portchecker.co/check  # ou utiliser un outil en ligne
+# Ou depuis une autre machine :
+nmap -p 80,443 <IP_PUBLIQUE>
+```
+
+### 5. Configurer Nginx Proxy Manager
 
 Accéder à **`http://<IP_SERVEUR>:81`** (port lié à l'interface locale, non exposé publiquement).
 
-- Email : `HOMEPAGE_NPM_EMAIL`
-- Mot de passe : `HOMEPAGE_NPM_PASSWORD`
+- Email par défaut NPM : `admin@example.com` → **à changer immédiatement**
+- Nouveau mot de passe : celui généré par `setup.sh` (voir `.credentials`)
 
 Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
 
@@ -214,7 +261,7 @@ Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
 
 > SSL : `Request a new SSL Certificate` → cocher `Force SSL` + `HTTP/2 Support`
 
-### 5. Configurer Plex
+### 6. Configurer Plex
 
 1. Aller sur `http://<IP_SERVEUR>:32400/web`
 2. Ajouter les bibliothèques :
@@ -223,7 +270,7 @@ Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
    - Animes → `/media/animes`
 3. Activer l'accès distant dans les paramètres
 
-### 6. Configurer la stack arr
+### 7. Configurer la stack arr
 
 **Ordre :** Prowlarr → Radarr → Sonarr → RDTClient → Seerr
 
@@ -241,14 +288,18 @@ Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
 3. `Paramètres → Se connecter → Script` : `/scripts/mkclean.sh` (événements : Sur importation)
 
 #### RDTClient
-1. `Settings` → clé API Real-Debrid depuis [real-debrid.com/apitoken](https://real-debrid.com/apitoken)
-2. `Settings → Download path` : `/data/downloads/rdtclient`
+1. `Settings` → clé API de ton service debrid :
+   - **Real-Debrid** : [real-debrid.com/apitoken](https://real-debrid.com/apitoken)
+   - **AllDebrid** : [alldebrid.com/apikeys](https://alldebrid.com/apikeys/)
+   - Autres services supportés : Premiumize, Debrid-Link, TorBox
+2. `Settings → Download client → Provider` → choisir le service correspondant
+3. `Settings → Download path` : `/data/downloads/rdtclient`
 
 #### Seerr
 1. Wizard → Plex : `http://host.docker.internal:32400`
 2. `Paramètres → Services` : Radarr `http://radarr:7878` / Sonarr `http://sonarr:8989`
 
-### 7. Récupérer les clés API pour Homepage
+### 8. Récupérer les clés API pour Homepage
 
 | Variable `.env` | Emplacement dans le service |
 |---|---|

@@ -22,6 +22,7 @@ ask()     { echo -e "${BOLD}$*${NC}"; }
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${REPO_DIR}/.env"
 ENV_EXAMPLE="${REPO_DIR}/.env.example"
+CREDENTIALS_FILE="${REPO_DIR}/.credentials"
 
 # --- Vérifications préalables -------------------------------------------------
 check_root() {
@@ -162,11 +163,41 @@ configure_env() {
     chmod 600 "$ENV_FILE"
     success ".env créé."
 
+    # Écriture du fichier de credentials (lisible uniquement par root)
+    cat > "$CREDENTIALS_FILE" <<EOF
+# =============================================================================
+# HOMELAB — Credentials générés le $(date '+%Y-%m-%d %H:%M')
+# Fichier CONFIDENTIEL — ne pas versionner, ne pas partager
+# =============================================================================
+
+Nginx Proxy Manager
+  URL      : http://<IP_SERVEUR>:81  (réseau local uniquement)
+  Email    : ${NPM_EMAIL}
+  Password : ${NPM_PASS}
+
+RDTClient
+  URL      : https://rdt.${DOMAIN}
+  Username : admin
+  Password : ${RDTCLIENT_PASS}
+
+pyLoad
+  URL      : https://pyload.${DOMAIN}
+  Username : pyload
+  Password : ${PYLOAD_PASS}
+
+Note: le mot de passe NPM doit être changé manuellement dans l'interface NPM
+(par défaut: admin@example.com / changeme) puis mis à jour dans .env.
+EOF
+    chmod 600 "$CREDENTIALS_FILE"
+    success "Credentials sauvegardés dans $CREDENTIALS_FILE"
+
     echo ""
-    echo -e "${YELLOW}=== Mots de passe générés (à sauvegarder) ===${NC}"
+    echo -e "${YELLOW}${BOLD}=== Mots de passe générés ===${NC}"
     echo -e "  RDTClient :          ${BOLD}${RDTCLIENT_PASS}${NC}"
     echo -e "  pyLoad :             ${BOLD}${PYLOAD_PASS}${NC}"
     echo -e "  Nginx Proxy Manager: ${BOLD}${NPM_PASS}${NC} (email: ${NPM_EMAIL})"
+    echo ""
+    echo -e "${YELLOW}Sauvegardés dans : ${BOLD}${CREDENTIALS_FILE}${NC}"
     echo ""
 }
 
@@ -295,6 +326,7 @@ print_summary() {
     echo -e "     cd ${REPO_DIR} && docker compose restart homepage"
     echo ""
     echo -e "${BOLD}Logs updater :${NC} /var/log/homelab-updater.log"
+    echo -e "${BOLD}Credentials  :${NC} ${CREDENTIALS_FILE}"
     echo ""
 }
 

@@ -18,6 +18,7 @@ services:
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
+      - TZ=${TZ:-Europe/Paris}
     volumes:
       - ./rdtclient-config:/data/db
       - ${DOWNLOADS_DIR}/rdtclient:/data/downloads/rdtclient
