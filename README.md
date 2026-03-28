@@ -130,7 +130,7 @@ homelab/
 ### 1. Cloner le repo
 
 ```bash
-# Sur le serveur, en tant que root
+# Remplacer l'URL par celle de ton fork / copie du repo
 git clone https://github.com/ton-user/homelab.git /opt/homelab
 cd /opt/homelab
 ```
@@ -154,12 +154,14 @@ Le script interactif demande :
 | Plex Claim token | — | Optionnel (obtenir sur plex.tv/claim) |
 | Email NPM admin | `admin@<domaine>` | Compte admin Nginx Proxy Manager |
 
-Les mots de passe (RDTClient, pyLoad, NPM) sont générés automatiquement et affichés une seule fois à la fin.
+Les mots de passe (RDTClient, pyLoad, NPM) sont **générés automatiquement** et
+sauvegardés dans le fichier **`.credentials`** (chmod 600, dans le répertoire du repo,
+jamais versionné). Ils sont aussi affichés dans le terminal en fin d'exécution.
 
 Ensuite `setup.sh` :
-1. Installe Docker Engine + Compose plugin
+1. Installe Docker Engine + Compose plugin (Ubuntu **et** Debian)
 2. Crée l'utilisateur système
-3. Écrit le fichier `.env`
+3. Écrit `.env` et génère `.credentials` (mots de passe)
 4. Crée les répertoires (`media/`, `downloads/`)
 5. Crée le réseau Docker `proxy_manager`
 6. Vérifie mkclean
@@ -236,10 +238,16 @@ nmap -p 80,443 <IP_PUBLIQUE>
 
 ### 5. Configurer Nginx Proxy Manager
 
-Accéder à **`http://<IP_SERVEUR>:81`** (port lié à l'interface locale, non exposé publiquement).
+Accéder à **`http://<IP_SERVEUR>:81`** (depuis ton réseau local uniquement — port non exposé sur Internet).
 
-- Email par défaut NPM : `admin@example.com` → **à changer immédiatement**
-- Nouveau mot de passe : celui généré par `setup.sh` (voir `.credentials`)
+**Première connexion :**
+1. Email : `admin@example.com` / Mot de passe : `changeme` (identifiants par défaut NPM)
+2. Une fois connecté : icône utilisateur en haut à droite → **Edit Profile**
+3. Changer l'email pour : la valeur `Email` dans `.credentials`
+4. Changer le mot de passe pour : la valeur `Mot de passe` dans `.credentials`
+5. Sauvegarder → re-connexion avec les nouveaux identifiants
+
+> `.credentials` se trouve à la racine du repo. Le `.env` est déjà configuré avec ces valeurs — rien d'autre à faire.
 
 Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
 
@@ -325,22 +333,29 @@ docker compose restart homepage
 
 ```bash
 cp .env.example .env
-nano .env
+nano .env          # Remplir toutes les valeurs
+
+# Sécuriser le fichier
+chmod 600 .env
 
 # Réseau Docker
 docker network create proxy_manager
 
-# Écrire le chemin dans le conf updater
+# Écrire le chemin absolu dans le conf updater
 echo "$(pwd)/docker-compose.yml" > updater/containers-to-update.conf
 
-# Créer les répertoires
+# Créer les répertoires de données
 source .env
 mkdir -p "${MEDIA_DIR}"/{movies,tvseries,animes}
 mkdir -p "${DOWNLOADS_DIR}"/{rdtclient,pyload}
 
-# Démarrer
+# Démarrer (proxy-manager en premier pour initialiser le réseau)
+docker compose up -d proxy-manager
+sleep 5
 docker compose up -d
 ```
+
+> **NPM** : première connexion avec `admin@example.com / changeme`, puis changer email et mot de passe pour les valeurs définies dans `.env` (`HOMEPAGE_NPM_EMAIL` / `HOMEPAGE_NPM_PASSWORD`).
 
 ---
 

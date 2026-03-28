@@ -46,15 +46,17 @@ install_docker() {
         return
     fi
     info "Installation de Docker..."
+    local distro
+    distro=$(. /etc/os-release && echo "$ID")  # ubuntu ou debian
     apt-get update -qq
     apt-get install -y -qq ca-certificates curl gnupg lsb-release
     install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+    curl -fsSL "https://download.docker.com/linux/${distro}/gpg" \
         | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     chmod a+r /etc/apt/keyrings/docker.gpg
     echo \
         "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-        https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+        https://download.docker.com/linux/${distro} $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
         > /etc/apt/sources.list.d/docker.list
     apt-get update -qq
     apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -171,22 +173,22 @@ configure_env() {
 # =============================================================================
 
 Nginx Proxy Manager
-  URL      : http://<IP_SERVEUR>:81  (réseau local uniquement)
-  Email    : ${NPM_EMAIL}
-  Password : ${NPM_PASS}
+  URL          : http://<IP_SERVEUR>:81  (réseau local uniquement)
+  Email        : ${NPM_EMAIL}
+  Mot de passe : ${NPM_PASS}
+  ⚠ Première connexion : utiliser admin@example.com / changeme,
+    puis changer Email + Mot de passe pour les valeurs ci-dessus.
+    Le mot de passe dans .env est déjà configuré.
 
 RDTClient
-  URL      : https://rdt.${DOMAIN}
-  Username : admin
-  Password : ${RDTCLIENT_PASS}
+  URL          : https://rdt.${DOMAIN}
+  Username     : admin
+  Mot de passe : ${RDTCLIENT_PASS}
 
 pyLoad
-  URL      : https://pyload.${DOMAIN}
-  Username : pyload
-  Password : ${PYLOAD_PASS}
-
-Note: le mot de passe NPM doit être changé manuellement dans l'interface NPM
-(par défaut: admin@example.com / changeme) puis mis à jour dans .env.
+  URL          : https://pyload.${DOMAIN}
+  Username     : pyload
+  Mot de passe : ${PYLOAD_PASS}
 EOF
     chmod 600 "$CREDENTIALS_FILE"
     success "Credentials sauvegardés dans $CREDENTIALS_FILE"
