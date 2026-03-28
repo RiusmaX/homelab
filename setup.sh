@@ -203,6 +203,28 @@ create_docker_network() {
     fi
 }
 
+# --- Setup mkclean ------------------------------------------------------------
+setup_mkclean() {
+    local bin="${REPO_DIR}/scripts/mkclean-bin"
+    local script="${REPO_DIR}/scripts/mkclean.sh"
+
+    if [[ ! -f "$bin" ]]; then
+        warn "Binaire mkclean introuvable ($bin). Le script d'optimisation MKV ne sera pas disponible."
+        warn "Voir scripts/README.md pour compiler depuis les sources."
+        return
+    fi
+
+    chmod +x "$bin" "$script"
+
+    # Vérifier que le binaire est exécutable sur cette architecture
+    if ! "$bin" --version &>/dev/null 2>&1; then
+        warn "Le binaire mkclean ne semble pas compatible avec cette architecture."
+        warn "Recompiler depuis les sources : voir scripts/README.md"
+    else
+        success "mkclean opérationnel ($(file "$bin" | grep -o 'ELF [^,]*'))"
+    fi
+}
+
 # --- Déploiement des stacks ---------------------------------------------------
 deploy_stacks() {
     set -a; source "$ENV_FILE"; set +a
@@ -253,9 +275,10 @@ print_summary() {
     echo -e "     Email: ${HOMEPAGE_NPM_EMAIL}  •  Mot de passe: ${HOMEPAGE_NPM_PASSWORD}"
     echo -e "  2. Configurer les proxy hosts pour chaque service."
     echo -e "  3. Récupérer les clés API (voir README.md section 'Clés API')."
-    echo -e "  4. Mettre à jour .env avec les clés, puis redémarrer homepage :"
-    echo -e "     cd ${REPO_DIR} && docker compose restart homepage"
-    echo ""
+    echo -e "  4. Dans Radarr/Sonarr : Paramètres → Se connecter → Script personnalisé"
+    echo -e "     Chemin : /scripts/mkclean.sh  (voir compose/arr-stack/README.md)"
+    echo -e "  5. Mettre à jour .env avec les clés, puis redémarrer homepage :"
+    echo -e "     cd ${REPO_DIR} && docker compose restart homepage"    echo ""
     echo -e "${BOLD}Logs updater :${NC} /var/log/homelab-updater.log"
     echo ""
 }
@@ -277,6 +300,7 @@ main() {
     configure_env
     create_directories
     create_docker_network
+    setup_mkclean
     deploy_stacks
     setup_cron
     print_summary

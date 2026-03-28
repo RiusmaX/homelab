@@ -1,0 +1,2 @@
+# Marquer le binaire mkclean comme fichier binaire pour git
+scripts/mkclean-bin binary
