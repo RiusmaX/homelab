@@ -1,0 +1,27 @@
+---
+# https://gethomepage.dev/configs/settings/
+
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+
+hideVersion: true
+statusStyle: "dot"
+cardBlur: sm
+
+theme: dark
+color: slate
+
+layout:
+  Conteneurs Docker:
+    style: row
+    columns: 1
+  Ressources Systeme:
+    style: row
+    columns: 1
+  Processus & I/O :
+    style: row
+    columns: 1
+  Stockage:
+    style: row
+    columns: 1

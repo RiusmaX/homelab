@@ -1,0 +1,61 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    user: "${PUID:-1000}:${PGID:-1000}"
+    group_add:
+      - "999"
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - HOMEPAGE_ALLOWED_HOSTS=${HOMEPAGE_ALLOWED_HOSTS:-home.yourdomain.com}
+      # API keys — injectées dans les configs via {{VARIABLE}}
+      - HOMEPAGE_PLEX_TOKEN=${HOMEPAGE_PLEX_TOKEN}
+      - HOMEPAGE_TAUTULLI_KEY=${HOMEPAGE_TAUTULLI_KEY}
+      - HOMEPAGE_SEERR_KEY=${HOMEPAGE_SEERR_KEY}
+      - HOMEPAGE_SONARR_KEY=${HOMEPAGE_SONARR_KEY}
+      - HOMEPAGE_RADARR_KEY=${HOMEPAGE_RADARR_KEY}
+      - HOMEPAGE_PROWLARR_KEY=${HOMEPAGE_PROWLARR_KEY}
+      - HOMEPAGE_DUPLICATI_TOKEN=${HOMEPAGE_DUPLICATI_TOKEN}
+      - HOMEPAGE_RDTCLIENT_USERNAME=${HOMEPAGE_RDTCLIENT_USERNAME:-admin}
+      - HOMEPAGE_RDTCLIENT_PASSWORD=${HOMEPAGE_RDTCLIENT_PASSWORD}
+      - HOMEPAGE_PYLOAD_USERNAME=${HOMEPAGE_PYLOAD_USERNAME:-pyload}
+      - HOMEPAGE_PYLOAD_PASSWORD=${HOMEPAGE_PYLOAD_PASSWORD}
+      - HOMEPAGE_NPM_EMAIL=${HOMEPAGE_NPM_EMAIL}
+      - HOMEPAGE_NPM_PASSWORD=${HOMEPAGE_NPM_PASSWORD}
+      - SERVER_LAN_IP=${SERVER_LAN_IP:-192.168.1.100}
+      - DOMAIN=${DOMAIN:-yourdomain.com}
+      - HOMEPAGE_WEATHER_LABEL=${HOMEPAGE_WEATHER_LABEL:-Ma Ville}
+      - HOMEPAGE_WEATHER_LATITUDE=${HOMEPAGE_WEATHER_LATITUDE:-48.8566}
+      - HOMEPAGE_WEATHER_LONGITUDE=${HOMEPAGE_WEATHER_LONGITUDE:-2.3522}
+    volumes:
+      - ./compose/homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/host/root:ro
+      # Montages médias — adapter selon la configuration des disques
+      - ${MEDIA_DIR}:/host/media:ro
+      # Décommenter et adapter pour les disques supplémentaires (USB, NAS...)
+      # - ${USB_MEDIA_DIR_1}:/host/usb1:ro
+      # - ${USB_MEDIA_DIR_2}:/host/usb2:ro
+    restart: unless-stopped
+    networks:
+      - proxy_manager
+
+  glances:
+    image: nicolargo/glances:latest-full
+    container_name: glances
+    pid: host
+    restart: unless-stopped
+    environment:
+      - GLANCES_OPT=-w
+      - TZ=${TZ:-Europe/Paris}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/host/root:ro
+    networks:
+      - proxy_manager
+
+networks:
+  proxy_manager:
+    external: true

@@ -1,0 +1,24 @@
+---
+# https://gethomepage.dev/configs/info-widgets/
+
+- resources:
+    cpu: true
+    cputemp: true
+    tempmin: 0
+    tempmax: 100
+    uptime: true
+    units: metric
+    memory: true
+    expanded: true
+    disk:
+        - /host/root
+        - /host/media
+
+- openmeteo:
+    label: "{{HOMEPAGE_WEATHER_LABEL}}"
+    icon: weather.png
+    timezone: "{{TZ}}"
+    units: metric
+    latitude: "{{HOMEPAGE_WEATHER_LATITUDE}}"
+    longitude: "{{HOMEPAGE_WEATHER_LONGITUDE}}"
+    cache: 5

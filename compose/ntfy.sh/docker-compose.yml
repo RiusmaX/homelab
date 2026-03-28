@@ -1,0 +1,18 @@
+services:
+  ntfy:
+    image: binwiederhier/ntfy:latest
+    container_name: ntfy
+    command: serve
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+      - NTFY_BASE_URL=https://ntfy.${DOMAIN}
+    volumes:
+      - ./compose/ntfy.sh/data:/var/lib/ntfy
+      - ./compose/ntfy.sh/config:/etc/ntfy
+    restart: unless-stopped
+    networks:
+      - proxy_manager
+
+networks:
+  proxy_manager:
+    external: true

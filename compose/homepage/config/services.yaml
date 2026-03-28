@@ -1,0 +1,237 @@
+- Conteneurs Docker:
+    - Glances:
+        icon: glances.png
+        href: https://stats.{{DOMAIN}}
+        description: Monitoring Systeme
+        server: my-docker
+        container: glances
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: info
+
+    - Plex:
+        icon: plex.png
+        href: https://plex.{{DOMAIN}}
+        description: Serveur Media
+        server: my-docker
+        container: plex
+        widget:
+            type: plex
+            url: http://{{SERVER_LAN_IP}}:32400
+            key: {{HOMEPAGE_PLEX_TOKEN}}
+
+    - Tautulli:
+        icon: tautulli.png
+        href: https://tautulli.{{DOMAIN}}
+        description: Statistiques Plex
+        server: my-docker
+        container: tautulli
+        widget:
+            type: tautulli
+            url: http://tautulli:8181
+            key: {{HOMEPAGE_TAUTULLI_KEY}}
+
+    - Seerr:
+        icon: overseerr.png
+        href: https://seer.{{DOMAIN}}
+        description: Demandes de medias
+        server: my-docker
+        container: seerr
+        widget:
+            type: overseerr
+            url: http://seerr:5055
+            key: {{HOMEPAGE_SEERR_KEY}}
+
+    - Sonarr:
+        icon: sonarr.png
+        href: https://tv.{{DOMAIN}}
+        description: Gestionnaire de Series
+        server: my-docker
+        container: sonarr
+        widget:
+            type: sonarr
+            url: http://sonarr:8989
+            key: {{HOMEPAGE_SONARR_KEY}}
+
+    - Radarr:
+        icon: radarr.png
+        href: https://movies.{{DOMAIN}}
+        description: Gestionnaire de Films
+        server: my-docker
+        container: radarr
+        widget:
+            type: radarr
+            url: http://radarr:7878
+            key: {{HOMEPAGE_RADARR_KEY}}
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: https://prowlarr.{{DOMAIN}}
+        description: Gestionnaire d'Indexeurs
+        server: my-docker
+        container: prowlarr
+        widget:
+            type: prowlarr
+            url: http://prowlarr:9696
+            key: {{HOMEPAGE_PROWLARR_KEY}}
+
+    - RDTClient:
+        icon: rdt-client.png
+        href: https://rdt.{{DOMAIN}}
+        description: Client Real-Debrid
+        server: my-docker
+        container: rdtclient
+        widget:
+            type: qbittorrent
+            url: http://rdtclient:6500
+            username: {{HOMEPAGE_RDTCLIENT_USERNAME}}
+            password: {{HOMEPAGE_RDTCLIENT_PASSWORD}}
+
+    - pyLoad:
+        icon: pyload.png
+        href: https://pyload.{{DOMAIN}}
+        description: Gestionnaire de telechargements HTTP
+        server: my-docker
+        container: pyload
+        widget:
+            type: pyload
+            url: http://pyload:8000
+            username: {{HOMEPAGE_PYLOAD_USERNAME}}
+            password: {{HOMEPAGE_PYLOAD_PASSWORD}}
+
+    - Duplicati:
+        icon: duplicati.png
+        href: https://duplicati.{{DOMAIN}}
+        description: Sauvegardes automatisees
+        server: my-docker
+        container: duplicati
+        widget:
+            type: customapi
+            url: http://duplicati:8200/api/v1/backups
+            headers:
+                Authorization: "Bearer {{HOMEPAGE_DUPLICATI_TOKEN}}"
+            mappings:
+                - field: 0.Backup.Metadata.LastBackupFinished
+                  label: Derniere sauvegarde
+                  format: relativeDate
+                - field: 0.Backup.Metadata.TargetSizeString
+                  label: Taille stockee
+                  format: text
+                - field: 0.Schedule.Time
+                  label: Prochain lancement
+                  format: relativeDate
+
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.png
+        href: https://proxy-manager.{{DOMAIN}}
+        description: Reverse Proxy / Routage
+        server: my-docker
+        container: proxy-manager
+        widget:
+            type: npm
+            url: http://proxy-manager:81
+            username: {{HOMEPAGE_NPM_EMAIL}}
+            password: {{HOMEPAGE_NPM_PASSWORD}}
+
+    - Ntfy:
+        icon: ntfy.png
+        href: https://ntfy.{{DOMAIN}}
+        description: Serveur de Notifications
+        server: my-docker
+        container: ntfy
+        widget:
+            type: customapi
+            url: http://ntfy:80/v1/stats
+            mappings:
+                - field: messages
+                  label: Messages
+                  format: number
+                - field: messages_rate
+                  label: Messages/s
+                  format: number
+
+- Ressources Systeme:
+    - CPU Usage:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: cpu
+
+    - Memory Usage:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: memory
+
+    - Network Usage:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: network:eth0
+
+    - CPU Temp:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: sensor:Package id 0
+
+- Processus & I/O :
+    - Top Processes:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: process
+
+    - Disk I/O (system):
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            # Adapter le nom du disque système (ex: sda, sdb, nvme0n1...)
+            metric: disk:sda
+
+    - Disk I/O (media):
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            # Adapter le nom du disque média principal
+            metric: disk:sdb
+
+    # Décommenter et adapter pour les disques supplémentaires
+    # - Disk I/O (usb1):
+    #     widget:
+    #         type: glances
+    #         url: http://glances:61208
+    #         version: 4
+    #         metric: disk:sdc
+
+- Stockage:
+    - System:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: fs:/host/root
+
+    - Media:
+        widget:
+            type: glances
+            url: http://glances:61208
+            version: 4
+            metric: fs:/host/media
+
+    # Décommenter pour les disques supplémentaires montés dans docker-compose.yml
+    # - USB-1:
+    #     widget:
+    #         type: glances
+    #         url: http://glances:61208
+    #         version: 4
+    #         metric: fs:/host/usb1

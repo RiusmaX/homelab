@@ -1,0 +1,19 @@
+services:
+  duplicati:
+    image: duplicati/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=${TZ:-Europe/Paris}
+    command: ["duplicati-server", "--webservice-enable-forever-token=true"]
+    volumes:
+      - ./compose/duplicati/config:/data/Duplicati
+      - /:/data/host:ro
+    restart: unless-stopped
+    networks:
+      - proxy_manager
+
+networks:
+  proxy_manager:
+    external: true

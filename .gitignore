@@ -1,0 +1,25 @@
+# Secrets — jamais versionnés
+.env
+
+# Données runtime des conteneurs (configs, bases de données, etc.)
+compose/arr-stack/radarr-config/
+compose/arr-stack/sonarr-config/
+compose/arr-stack/seerr-config/
+compose/duplicati/config/
+compose/nginx-proxy-manager/data/
+compose/nginx-proxy-manager/letsencrypt/
+compose/ntfy.sh/data/
+compose/ntfy.sh/config/
+compose/plex/config/
+compose/pyload/config/
+compose/tautulli/config/
+compose/torrenting/prowlarr-config/
+compose/torrenting/rdtclient-config/
+compose/homepage/config/logs/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

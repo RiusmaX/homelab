@@ -1,0 +1,18 @@
+services:
+  proxy-manager:
+    container_name: proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./compose/nginx-proxy-manager/data:/data
+      - ./compose/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy_manager
+
+networks:
+  proxy_manager:
+    name: proxy_manager
+    external: true
