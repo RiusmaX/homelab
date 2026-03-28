@@ -7,8 +7,8 @@ services:
       - TZ=${TZ:-Europe/Paris}
       - NTFY_BASE_URL=https://ntfy.${DOMAIN}
     volumes:
-      - ./compose/ntfy.sh/data:/var/lib/ntfy
-      - ./compose/ntfy.sh/config:/etc/ntfy
+      - ./data:/var/lib/ntfy
+      - ./config:/etc/ntfy
     restart: unless-stopped
     networks:
       - proxy_manager

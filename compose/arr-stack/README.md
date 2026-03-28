@@ -39,8 +39,12 @@ Seerr (demandes utilisateurs)
 - **URL** : `https://seer.${DOMAIN}`
 
 **Post-install :**
-1. Connecter Plex lors du wizard initial
-2. `Paramètres → Services` → ajouter Radarr et Sonarr
+1. Wizard initial → connecter Plex :
+   - Host : `host.docker.internal` (Plex est en `network_mode: host` — `extra_hosts` configuré dans le compose)
+   - Port : `32400`
+2. `Paramètres → Services` :
+   - Radarr : `http://radarr:7878`
+   - Sonarr : `http://sonarr:8989`
 3. `Paramètres → Général` → noter la clé API → mettre dans `.env` (`HOMEPAGE_SEERR_KEY`)
 
 ### FlareSolverr — Bypass Cloudflare

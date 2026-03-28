@@ -7,11 +7,11 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-Europe/Paris}
     volumes:
-      - ./compose/arr-stack/radarr-config:/config
+      - ./radarr-config:/config
       - ${MEDIA_DIR}:/media
       - ${DOWNLOADS_DIR}/rdtclient:/downloads
-      - ./scripts:/scripts:rw
-      - ./scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
+      - ../../scripts:/scripts:rw
+      - ../../scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
     restart: unless-stopped
     networks:
       - proxy_manager
@@ -24,11 +24,11 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-Europe/Paris}
     volumes:
-      - ./compose/arr-stack/sonarr-config:/config
+      - ./sonarr-config:/config
       - ${MEDIA_DIR}:/media
       - ${DOWNLOADS_DIR}/rdtclient:/downloads
-      - ./scripts:/scripts:rw
-      - ./scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
+      - ../../scripts:/scripts:rw
+      - ../../scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
     restart: unless-stopped
     networks:
       - proxy_manager
@@ -37,12 +37,18 @@ services:
     image: ghcr.io/seerr-team/seerr:latest
     init: true
     container_name: seerr
+    depends_on:
+      - radarr
+      - sonarr
     environment:
       - LOG_LEVEL=info
       - TZ=${TZ:-Europe/Paris}
       - PORT=5055
+    extra_hosts:
+      # Permet d'atteindre Plex (network_mode: host) via host.docker.internal:32400
+      - "host.docker.internal:host-gateway"
     volumes:
-      - ./compose/arr-stack/seerr-config:/app/config
+      - ./seerr-config:/app/config
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
       start_period: 20s

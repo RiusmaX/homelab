@@ -30,7 +30,7 @@ services:
       - HOMEPAGE_WEATHER_LATITUDE=${HOMEPAGE_WEATHER_LATITUDE:-48.8566}
       - HOMEPAGE_WEATHER_LONGITUDE=${HOMEPAGE_WEATHER_LONGITUDE:-2.3522}
     volumes:
-      - ./compose/homepage/config:/app/config
+      - ./config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /:/host/root:ro
       # Montages médias — adapter selon la configuration des disques

@@ -10,7 +10,7 @@ services:
       - UMASK=022
       - PLEX_CLAIM=${PLEX_CLAIM:-}
     volumes:
-      - ./compose/plex/config:/config
+      - ./config:/config
       - ${MEDIA_DIR}:/media
     # Décommenter si le serveur dispose d'un GPU Intel pour le transcodage matériel
     # devices:

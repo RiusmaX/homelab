@@ -7,7 +7,7 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-Europe/Paris}
     volumes:
-      - ./compose/pyload/config:/config
+      - ./config:/config
       - ${DOWNLOADS_DIR}/pyload:/downloads
     restart: unless-stopped
     networks:

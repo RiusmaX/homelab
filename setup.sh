@@ -225,14 +225,28 @@ setup_mkclean() {
     fi
 }
 
+# --- Mise à jour du fichier de configuration de l'updater -------------------
+configure_updater() {
+    local conf_file="${REPO_DIR}/updater/containers-to-update.conf"
+    info "Configuration de l'updater..."
+    cat > "$conf_file" <<EOF
+# Mise à jour automatique — généré par setup.sh
+# Chemin absolu vers le docker-compose.yml racine
+${REPO_DIR}/docker-compose.yml
+EOF
+    success "Updater configuré : $conf_file"
+}
+
 # --- Déploiement des stacks ---------------------------------------------------
 deploy_stacks() {
     set -a; source "$ENV_FILE"; set +a
     cd "$REPO_DIR"
 
-    info "Démarrage de Nginx Proxy Manager (réseau + reverse proxy)..."
-    docker compose -f compose/nginx-proxy-manager/docker-compose.yml up -d
-    sleep 3
+    info "Démarrage de Nginx Proxy Manager en premier (requis pour le réseau)..."
+    # Les sous-composes sont lancés via le compose racine (include:)
+    # Docker Compose résout les chemins relatifs depuis chaque fichier inclus
+    docker compose up -d proxy-manager
+    sleep 5
 
     info "Démarrage de toutes les stacks..."
     docker compose up -d
@@ -278,7 +292,8 @@ print_summary() {
     echo -e "  4. Dans Radarr/Sonarr : Paramètres → Se connecter → Script personnalisé"
     echo -e "     Chemin : /scripts/mkclean.sh  (voir compose/arr-stack/README.md)"
     echo -e "  5. Mettre à jour .env avec les clés, puis redémarrer homepage :"
-    echo -e "     cd ${REPO_DIR} && docker compose restart homepage"    echo ""
+    echo -e "     cd ${REPO_DIR} && docker compose restart homepage"
+    echo ""
     echo -e "${BOLD}Logs updater :${NC} /var/log/homelab-updater.log"
     echo ""
 }
@@ -301,6 +316,7 @@ main() {
     create_directories
     create_docker_network
     setup_mkclean
+    configure_updater
     deploy_stacks
     setup_cron
     print_summary

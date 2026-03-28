@@ -11,7 +11,7 @@ Tautulli surveille l'activité de Plex et génère des statistiques détaillées
 ## Post-install
 
 1. Au premier lancement, renseigner l'adresse du serveur Plex :
-   - Host : `<IP_SERVEUR>` (ou `host.docker.internal` si Plex est sur le même hôte)
+   - Host : `host.docker.internal` (Plex est en `network_mode: host` — `extra_hosts` configuré dans le compose)
    - Port : `32400`
    - Token Plex : le même que `HOMEPAGE_PLEX_TOKEN`
 2. Tautulli commence à collecter les données en temps réel

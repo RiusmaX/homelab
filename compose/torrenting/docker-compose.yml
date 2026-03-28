@@ -7,7 +7,7 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-Europe/Paris}
     volumes:
-      - ./compose/torrenting/prowlarr-config:/config
+      - ./prowlarr-config:/config
     restart: unless-stopped
     networks:
       - proxy_manager
@@ -19,7 +19,7 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
     volumes:
-      - ./compose/torrenting/rdtclient-config:/data/db
+      - ./rdtclient-config:/data/db
       - ${DOWNLOADS_DIR}/rdtclient:/data/downloads/rdtclient
     restart: unless-stopped
     networks:

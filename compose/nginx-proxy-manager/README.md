@@ -6,7 +6,7 @@ Nginx Proxy Manager gère le routage HTTPS vers tous les services internes. Il g
 
 - **Port 80** : HTTP (redirection vers HTTPS)
 - **Port 443** : HTTPS (proxy vers les services)
-- **Port 81** : Interface d'administration (NPM lui-même) — exposé localement uniquement
+- **Port 81** : Interface d'administration — lié à `127.0.0.1`, accessible **uniquement depuis le réseau local** (non exposé publiquement)
 - **Config** : `compose/nginx-proxy-manager/data/` et `letsencrypt/` (non versionnés)
 - **URL admin** : `http://<IP_SERVEUR>:81`
 
