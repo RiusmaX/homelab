@@ -17,6 +17,16 @@ Film/série importé → Radarr/Sonarr → mkclean.sh → mkclean-bin --optimize
 
 **L'astuce I/O buffer SSD :** le fichier temporaire est écrit dans `/downloads` (qui doit être sur un SSD rapide) avant d'être déplacé vers `/media` (HDD). Cela évite une lecture/écriture séquentielle lente sur le même disque.
 
+**Sérialisation (anti-étranglement) :** lors d'un import en lot (saison complète, plusieurs films), Radarr/Sonarr déclenchent le hook une fois par fichier. Pour éviter que plusieurs `mkclean` saturent le disque en parallèle, le script :
+
+- **rend la main immédiatement** à Radarr/Sonarr (le travail est détaché en arrière-plan via `nohup`), donc l'import n'est jamais bloqué ;
+- traite les fichiers **un par un** grâce à un verrou `flock` (`/scripts/mkclean.lock`) partagé entre Radarr **et** Sonarr — un seul `mkclean` actif sur tout le serveur, les autres patientent dans la file ;
+- s'exécute en **priorité CPU/IO basse** (`nice -n 19 ionice -c 3`) pour ne pas gêner Plex ni les imports en cours.
+
+> Nécessite `flock`, `nohup`, `nice` et `ionice` dans le conteneur (présents par défaut dans les images linuxserver.io / busybox).
+
+**Rotation du log :** `mkclean.log` est tourné vers `mkclean.log.1` dès qu'il dépasse 10 Mo, pour éviter qu'il grossisse sans fin.
+
 ### Configuration dans Radarr / Sonarr
 
 1. Aller dans `Paramètres → Se connecter → Ajouter une connexion`
