@@ -15,4 +15,10 @@ services:
     # Décommenter si le serveur dispose d'un GPU Intel pour le transcodage matériel
     # devices:
     #   - /dev/dri:/dev/dri
+    healthcheck:
+      test: curl -fsS http://localhost:32400/identity || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     restart: unless-stopped

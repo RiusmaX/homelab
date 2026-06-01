@@ -1,0 +1,15 @@
+services:
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: autoheal
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+      # Surveille TOUS les conteneurs qui définissent un healthcheck et
+      # redémarre automatiquement ceux qui passent "unhealthy".
+      - AUTOHEAL_CONTAINER_LABEL=all
+      - AUTOHEAL_INTERVAL=30
+      - AUTOHEAL_START_PERIOD=60
+    volumes:
+      # Accès au démon Docker pour inspecter et redémarrer les conteneurs
+      - /var/run/docker.sock:/var/run/docker.sock

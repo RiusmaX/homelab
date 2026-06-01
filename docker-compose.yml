@@ -8,6 +8,7 @@ include:
   - ./compose/tautulli/docker-compose.yml
   - ./compose/torrenting/docker-compose.yml
   - ./compose/homepage/docker-compose.yml
+  - ./compose/autoheal/docker-compose.yml
 
 networks:
   proxy_manager:

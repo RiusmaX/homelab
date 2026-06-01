@@ -22,6 +22,9 @@ Stack Docker Compose complète, sécurisée et déployable en one-click sur un s
 | **ntfy** | Notifications push | 80 | [→](compose/ntfy.sh/README.md) |
 | **Homepage** | Dashboard unifié | 3000 | [→](compose/homepage/README.md) |
 | **Glances** | Monitoring système | 61208 | [→](compose/homepage/README.md) |
+| **autoheal** | Redémarre les conteneurs `unhealthy` | — (interne) | — |
+
+> **Résilience** : la plupart des services définissent un `healthcheck`. Le conteneur **autoheal** surveille tous ces healthchecks et **redémarre automatiquement** tout conteneur qui passe `unhealthy` (un `restart: unless-stopped` seul ne couvre pas un conteneur figé mais non crashé).
 
 ---
 
@@ -400,6 +403,18 @@ Le script `updater/updater.sh` :
 2. `docker compose pull` des nouvelles images
 3. `docker compose up -d --force-recreate --remove-orphans` (résout les conflits de noms)
 4. `docker image prune -f` (libère de l'espace)
+5. **notification ntfy** de succès/échec si `NTFY_URL` + `NTFY_TOKEN` sont définis dans `.env` (voir `.env.example` pour créer un token write-only dédié)
+
+### Rotation des logs Docker
+
+Par défaut, les logs `json-file` des conteneurs grossissent **sans limite** et peuvent saturer le disque. Créer `/etc/docker/daemon.json` puis redémarrer Docker (`sudo systemctl restart docker`) :
+
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": { "max-size": "10m", "max-file": "3" }
+}
+```
 
 ```bash
 # Mise à jour manuelle

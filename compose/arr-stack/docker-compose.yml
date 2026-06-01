@@ -12,6 +12,12 @@ services:
       - ${DOWNLOADS_DIR}/rdtclient:/downloads
       - ../../scripts:/scripts:rw
       - ../../scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
+    healthcheck:
+      test: curl -fsS http://localhost:7878/ping || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
     restart: unless-stopped
     networks:
       - proxy_manager
@@ -29,6 +35,12 @@ services:
       - ${DOWNLOADS_DIR}/rdtclient:/downloads
       - ../../scripts:/scripts:rw
       - ../../scripts/init-alpine.sh:/custom-cont-init.d/init-alpine.sh:ro
+    healthcheck:
+      test: curl -fsS http://localhost:8989/ping || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
     restart: unless-stopped
     networks:
       - proxy_manager
