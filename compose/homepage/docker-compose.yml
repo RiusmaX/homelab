@@ -32,7 +32,8 @@ services:
     volumes:
       - ./config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /:/host/root:ro
+      # Pas de montage de '/' ici (sécurité) : les widgets "Stockage" passent par
+      # le conteneur glances (qui, lui, monte / pour le monitoring système).
       # Montages médias — adapter selon la configuration des disques
       - ${MEDIA_DIR}:/host/media:ro
       # Décommenter et adapter pour les disques supplémentaires (USB, NAS...)

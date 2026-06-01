@@ -77,6 +77,8 @@ services:
     environment:
       - LOG_LEVEL=info
       - TZ=${TZ:-Europe/Paris}
+    # Plafond mémoire : Chromium peut gonfler ; évite d'OOM toute la machine
+    mem_limit: 1g
     restart: unless-stopped
     networks:
       - proxy_manager
