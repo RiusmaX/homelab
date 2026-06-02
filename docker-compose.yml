@@ -4,7 +4,6 @@ include:
   - ./compose/nginx-proxy-manager/docker-compose.yml
   - ./compose/ntfy.sh/docker-compose.yml
   - ./compose/plex/docker-compose.yml
-  - ./compose/pyload/docker-compose.yml
   - ./compose/tautulli/docker-compose.yml
   - ./compose/torrenting/docker-compose.yml
   - ./compose/homepage/docker-compose.yml

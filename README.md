@@ -17,7 +17,6 @@ Stack Docker Compose complète, sécurisée et déployable en one-click sur un s
 | **Prowlarr** | Gestionnaire d'indexeurs | 9696 | [→](compose/torrenting/README.md) |
 | **FlareSolverr** | Bypass Cloudflare | 8191 (interne) | [→](compose/arr-stack/README.md) |
 | **RDTClient** | Client debrid (Real-Debrid, AllDebrid…) | 6500 | [→](compose/torrenting/README.md) |
-| **pyLoad** | Téléchargements HTTP | 8000 | [→](compose/pyload/README.md) |
 | **Duplicati** | Sauvegardes chiffrées | 8200 | [→](compose/duplicati/README.md) |
 | **ntfy** | Notifications push | 80 | [→](compose/ntfy.sh/README.md) |
 | **Homepage** | Dashboard unifié | 3000 | [→](compose/homepage/README.md) |
@@ -47,7 +46,6 @@ Nginx Proxy Manager  (proxy_manager network)
    ├── rdtclient:6500  ├─ torrenting
    │                  ─┘
    ├── tautulli:8181
-   ├── pyload:8000
    ├── duplicati:8200
    ├── ntfy:80
    └── glances:61208
@@ -102,7 +100,6 @@ homelab/
 │   │   └── letsencrypt/           # Certificats → .gitignore
 │   ├── ntfy.sh/
 │   ├── plex/
-│   ├── pyload/
 │   ├── tautulli/
 │   └── torrenting/                # Prowlarr, RDTClient
 │
@@ -157,7 +154,7 @@ Le script interactif demande :
 | Plex Claim token | — | Optionnel (obtenir sur plex.tv/claim) |
 | Email NPM admin | `admin@<domaine>` | Compte admin Nginx Proxy Manager |
 
-Les mots de passe (RDTClient, pyLoad, NPM) sont **générés automatiquement** et
+Les mots de passe (RDTClient, NPM) sont **générés automatiquement** et
 sauvegardés dans le fichier **`.credentials`** (chmod 600, dans le répertoire du repo,
 jamais versionné). Ils sont aussi affichés dans le terminal en fin d'exécution.
 
@@ -184,7 +181,6 @@ movies.yourdomain.com        → <IP_PUBLIQUE>
 seer.yourdomain.com          → <IP_PUBLIQUE>
 prowlarr.yourdomain.com      → <IP_PUBLIQUE>
 rdt.yourdomain.com           → <IP_PUBLIQUE>
-pyload.yourdomain.com        → <IP_PUBLIQUE>
 duplicati.yourdomain.com     → <IP_PUBLIQUE>
 ntfy.yourdomain.com          → <IP_PUBLIQUE>
 tautulli.yourdomain.com      → <IP_PUBLIQUE>
@@ -263,7 +259,6 @@ Pour chaque service : `Hosts → Proxy Hosts → Add Proxy Host`
 | `seer.domaine.com` | `seerr` | `5055` | ✅ |
 | `prowlarr.domaine.com` | `prowlarr` | `9696` | ✅ |
 | `rdt.domaine.com` | `rdtclient` | `6500` | ✅ |
-| `pyload.domaine.com` | `pyload` | `8000` | ✅ |
 | `duplicati.domaine.com` | `duplicati` | `8200` | ✅ |
 | `ntfy.domaine.com` | `ntfy` | `80` | ✅ |
 | `tautulli.domaine.com` | `tautulli` | `8181` | ✅ |
@@ -350,7 +345,7 @@ echo "$(pwd)/docker-compose.yml" > updater/containers-to-update.conf
 # Créer les répertoires de données
 source .env
 mkdir -p "${MEDIA_DIR}"/{movies,tvseries,animes}
-mkdir -p "${DOWNLOADS_DIR}"/{rdtclient,pyload}
+mkdir -p "${DOWNLOADS_DIR}"/rdtclient
 
 # Démarrer (proxy-manager en premier pour initialiser le réseau)
 docker compose up -d proxy-manager

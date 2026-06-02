@@ -138,7 +138,6 @@ configure_env() {
 
     # Credentials auto-générés
     local RDTCLIENT_PASS; RDTCLIENT_PASS=$(gen_password)
-    local PYLOAD_PASS; PYLOAD_PASS=$(gen_password)
     local NPM_PASS; NPM_PASS=$(gen_password)
 
     ask "Email admin Nginx Proxy Manager [admin@${DOMAIN}] :"
@@ -157,7 +156,6 @@ configure_env() {
     sed -i "s|^DOWNLOADS_DIR=.*|DOWNLOADS_DIR=${DOWNLOADS_DIR}|" "$ENV_FILE"
     sed -i "s|^PLEX_CLAIM=.*|PLEX_CLAIM=${PLEX_CLAIM}|" "$ENV_FILE"
     sed -i "s|^HOMEPAGE_RDTCLIENT_PASSWORD=.*|HOMEPAGE_RDTCLIENT_PASSWORD=${RDTCLIENT_PASS}|" "$ENV_FILE"
-    sed -i "s|^HOMEPAGE_PYLOAD_PASSWORD=.*|HOMEPAGE_PYLOAD_PASSWORD=${PYLOAD_PASS}|" "$ENV_FILE"
     sed -i "s|^HOMEPAGE_NPM_EMAIL=.*|HOMEPAGE_NPM_EMAIL=${NPM_EMAIL}|" "$ENV_FILE"
     sed -i "s|^HOMEPAGE_NPM_PASSWORD=.*|HOMEPAGE_NPM_PASSWORD=${NPM_PASS}|" "$ENV_FILE"
     sed -i "s|^HOMEPAGE_ALLOWED_HOSTS=.*|HOMEPAGE_ALLOWED_HOSTS=home.${DOMAIN}|" "$ENV_FILE"
@@ -184,11 +182,6 @@ RDTClient
   URL          : https://rdt.${DOMAIN}
   Username     : admin
   Mot de passe : ${RDTCLIENT_PASS}
-
-pyLoad
-  URL          : https://pyload.${DOMAIN}
-  Username     : pyload
-  Mot de passe : ${PYLOAD_PASS}
 EOF
     chmod 600 "$CREDENTIALS_FILE"
     success "Credentials sauvegardés dans $CREDENTIALS_FILE"
@@ -196,7 +189,6 @@ EOF
     echo ""
     echo -e "${YELLOW}${BOLD}=== Mots de passe générés ===${NC}"
     echo -e "  RDTClient :          ${BOLD}${RDTCLIENT_PASS}${NC}"
-    echo -e "  pyLoad :             ${BOLD}${PYLOAD_PASS}${NC}"
     echo -e "  Nginx Proxy Manager: ${BOLD}${NPM_PASS}${NC} (email: ${NPM_EMAIL})"
     echo ""
     echo -e "${YELLOW}Sauvegardés dans : ${BOLD}${CREDENTIALS_FILE}${NC}"
@@ -215,7 +207,6 @@ create_directories() {
         "${MEDIA_DIR}/tvseries"
         "${MEDIA_DIR}/animes"
         "${DOWNLOADS_DIR}/rdtclient"
-        "${DOWNLOADS_DIR}/pyload"
     )
 
     for dir in "${dirs[@]}"; do

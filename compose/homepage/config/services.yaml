@@ -89,18 +89,6 @@
             username: {{HOMEPAGE_RDTCLIENT_USERNAME}}
             password: {{HOMEPAGE_RDTCLIENT_PASSWORD}}
 
-    - pyLoad:
-        icon: pyload.png
-        href: https://pyload.{{DOMAIN}}
-        description: Gestionnaire de telechargements HTTP
-        server: my-docker
-        container: pyload
-        widget:
-            type: pyload
-            url: http://pyload:8000
-            username: {{HOMEPAGE_PYLOAD_USERNAME}}
-            password: {{HOMEPAGE_PYLOAD_PASSWORD}}
-
     - Duplicati:
         icon: duplicati.png
         href: https://duplicati.{{DOMAIN}}

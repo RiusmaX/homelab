@@ -41,7 +41,6 @@ Pour chaque service, créer un **Proxy Host** :
 | `seer.yourdomain.com` | `seerr` | `5055` |
 | `prowlarr.yourdomain.com` | `prowlarr` | `9696` |
 | `rdt.yourdomain.com` | `rdtclient` | `6500` |
-| `pyload.yourdomain.com` | `pyload` | `8000` |
 | `duplicati.yourdomain.com` | `duplicati` | `8200` |
 | `ntfy.yourdomain.com` | `ntfy` | `80` |
 | `tautulli.yourdomain.com` | `tautulli` | `8181` |

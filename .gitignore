@@ -12,7 +12,6 @@ compose/nginx-proxy-manager/letsencrypt/
 compose/ntfy.sh/data/
 compose/ntfy.sh/config/
 compose/plex/config/
-compose/pyload/config/
 compose/tautulli/config/
 compose/torrenting/prowlarr-config/
 compose/torrenting/rdtclient-config/
