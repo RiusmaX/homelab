@@ -1,5 +1,9 @@
 # Homelab — Self-hosted media & services stack
 
+Bonjour et merci de regarder mon projet ``'homelab'``
+
+---
+
 Stack Docker Compose complète, sécurisée et déployable en one-click sur un serveur Ubuntu/Debian vierge. Tous les secrets sont dans `.env` (jamais versionné). Les configurations sont versionnées et partageables publiquement.
 
 ---
