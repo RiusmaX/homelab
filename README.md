@@ -4,6 +4,8 @@ Stack Docker Compose complète, sécurisée et déployable en one-click sur un s
 
 ---
 
+Ma super mise à jour de contribution pour le README, avec une section détaillée sur les services inclus, l'architecture réseau, et un guide de déploiement étape par étape. J'ai aussi ajouté des sections sur la configuration manuelle, les disques supplémentaires, la mise à jour automatique, l'optimisation MKV, la sécurité, les commandes utiles et le dépannage.
+
 ## Services
 
 | Service | Rôle | Port interne | README |
